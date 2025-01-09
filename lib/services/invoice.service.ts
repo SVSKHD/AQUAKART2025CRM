@@ -8,7 +8,7 @@ export const invoiceService = {
     return response.data;
   },
 
-  async getById(id: string) {
+  async getById(id: any) {
     const response = await api.get(API_ENDPOINTS.INVOICE_BY_ID(id));
     return response.data;
   },

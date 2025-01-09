@@ -18,8 +18,8 @@ export function SubCategoriesTab() {
       }
     };
 
-    fetchSubCategories(); // Call the function correctly
-  }, []); // Empty dependency array to run only once
+    fetchSubCategories(); 
+  }, []); 
 
   return (
     <div className="space-y-4">

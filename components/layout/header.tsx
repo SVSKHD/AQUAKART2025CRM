@@ -6,14 +6,21 @@ import { RootState } from "@/lib/store/store";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { logout } from "@/lib/store/slices/authSlice";
+import { usePathname } from "next/navigation";
 
 export function Header() {
+  const pathname = usePathname(); // Get the current path
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout());
   };
+
+  // Hide header for `/invoice/:id` pages
+  if (pathname.startsWith("/invoice/")) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-4xl border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-md rounded-md">
