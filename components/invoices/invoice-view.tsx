@@ -7,9 +7,11 @@ import { formatCurrency } from "@/lib/utils/table";
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import AquaLists from "../reusables/lists";
-import { FaWhatsapp, FaDownload, FaShareAlt, FaEllipsisV } from "react-icons/fa";
-import { useState } from "react";
-
+import { FaWhatsapp, FaDownload } from "react-icons/fa";
+import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 
 interface InvoiceViewProps {
@@ -17,7 +19,9 @@ interface InvoiceViewProps {
 }
 
 export function InvoiceView({ invoice }: InvoiceViewProps) {
+  const invoiceRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   if (!invoice) {
     return (
       <div className="p-6 text-center text-red-500">
@@ -37,6 +41,20 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
   const BasePrice = (price: number) => {
     let basePrice = Math.floor(price * 0.8474594);
     return basePrice;
+  };
+
+  const downloadInvoiceAsPDF = async () => {
+    if (!invoiceRef.current) return;
+
+    const canvas = await html2canvas(invoiceRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    pdf.save(`Invoice_${invoice.customerDetails?.name || "Unknown"}.pdf`);
   };
 
   let termsAndConditions = [
@@ -71,11 +89,12 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
   ];
 
   return (
-    <div className="space-y-6">
+    <>
+    <div ref={invoiceRef} className="space-y-6 p-5">
       {/* Title and GST Header */}
-      <div className="flex flex-col items-center text-center">
+      <div  className="flex flex-col items-center text-center">
         <h1 className="text-4xl font-bold text-blue-900">Aquakart</h1>
-        <Badge className="fs-6 bg-blue-500">GST: 36AJOPH6387A1Z2</Badge>
+        <Badge className="fs-6 mt-5 bg-blue-500">GST: 36AJOPH6387A1Z2</Badge>
       </div>
 
       {/* Invoice Header */}
@@ -90,7 +109,6 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
           {invoice.paidStatus || "Pending"}
         </Badge>
       </div>
-     
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Customer Details */}
@@ -160,15 +178,29 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
         </div>
       </Card>
 
-          {/* Terms & Conditions Section */}
-          <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Terms & Conditions</h3>
+      {/* Terms & Conditions Section */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Terms & Conditions</h3>
         <ul className="space-y-4">
           {termsAndConditions.map((term, index) => (
             <AquaLists key={index} number={index + 1} title={term.title} description={term.description} />
           ))}
         </ul>
-      </div>
+      </Card>
+
+      {/* WhatsApp & Download Buttons */}
+      
     </div>
+    <Card className="p-6 mt-5 flex justify-between items-center">
+        <Button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+          <FaWhatsapp size={18} />
+          Share on WhatsApp
+        </Button>
+        <Button onClick={downloadInvoiceAsPDF} className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+          <FaDownload size={18} />
+          Download Invoice
+        </Button>
+      </Card>
+    </>
   );
 }

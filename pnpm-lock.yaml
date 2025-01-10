@@ -80,8 +80,11 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      html2canvas:
+        specifier: ^1.4.1
+        version: 1.4.1
       jspdf:
-        specifier: ^2.5.1
+        specifier: ^2.5.2
         version: 2.5.2
       jspdf-autotable:
         specifier: ^3.8.2
@@ -3864,8 +3867,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  base64-arraybuffer@1.0.2:
-    optional: true
+  base64-arraybuffer@1.0.2: {}
 
   binary-extensions@2.3.0: {}
 
@@ -3991,7 +3993,6 @@ snapshots:
   css-line-break@2.1.0:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   cssesc@3.0.0: {}
 
@@ -4579,7 +4580,6 @@ snapshots:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
-    optional: true
 
   ignore@5.3.2: {}
 
@@ -5580,7 +5580,6 @@ snapshots:
   text-segmentation@1.0.3:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   text-table@0.2.0: {}
 
@@ -5701,7 +5700,6 @@ snapshots:
   utrie@1.0.2:
     dependencies:
       base64-arraybuffer: 1.0.2
-    optional: true
 
   w3c-keyname@2.2.8: {}
 

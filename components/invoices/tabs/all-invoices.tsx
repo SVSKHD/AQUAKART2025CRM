@@ -5,15 +5,14 @@ import { DataTable } from "@/components/invoices/data-table/data-table";
 import { invoiceService } from "@/lib/services";
 import { useEffect, useState } from "react";
 
-
-export function GSTInvoicesTab() {
+export function AllInvoicesTab() {
    const [invoices, setInvoices] = useState<any[]>([]);
    
      useEffect(() => {
        // Fetch invoices only once when the component mounts
        const fetchInvoices = async () => {
          try {
-           const res = await invoiceService.getGstAll();
+           const res = await invoiceService.getAllIn();
            setInvoices(res.data);
          } catch (error) {
            console.error("Error fetching invoices:", error);

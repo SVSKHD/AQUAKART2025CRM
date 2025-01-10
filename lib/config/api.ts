@@ -7,6 +7,8 @@ export const API_ENDPOINTS = {
   
   // Invoices
   INVOICES: '/crm/admin/all-invoices?user=true',
+  GSTINVOICES: '/crm/admin/all-invoices?gst=true',
+  ALLINVOICES: '/crm/admin/all-invoices',
   INVOICE_BY_ID: (id: string) => `crm/invoice/${id}`,
   
   // Categories
