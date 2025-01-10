@@ -4,6 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
+  basePath: "/admin/crm", // Added basePath
 };
 
 module.exports = nextConfig;

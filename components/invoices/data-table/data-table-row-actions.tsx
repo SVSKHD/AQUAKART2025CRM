@@ -30,7 +30,7 @@ export function DataTableRowActions<TData>({
 
   const handleViewInNewTab = () => {
     // Open invoice in new tab
-    window.open(`/invoice/${invoice._id}`, '_blank');
+    window.open(`/admin/crm/invoice/${invoice._id}`, '_blank');
   };
 
   return (
