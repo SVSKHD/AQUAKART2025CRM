@@ -11,13 +11,20 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface ProductListProps {
   products: Product[];
+  reloadProducts: () => void; 
 }
-
-export function ProductList({ products }: ProductListProps) {
+export function ProductList({ products, reloadProducts }: ProductListProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [mode, setMode] = useState<"create" | "edit">("create");
   const { toast } = useToast();
+
+  const handleView = (product: Product) => {
+    toast({
+      title: "Product viewed",
+      description: `${product.title} is being viewed.`,
+    });
+  };
 
   const handleCreate = () => {
     setSelectedProduct(undefined);
@@ -53,6 +60,7 @@ export function ProductList({ products }: ProductListProps) {
         searchColumn="title"
         searchPlaceholder="Search products..."
         meta={{
+          onView: handleView,
           onEdit: handleEdit,
           onDelete: handleDelete,
         }}
@@ -63,6 +71,7 @@ export function ProductList({ products }: ProductListProps) {
         onOpenChange={setDialogOpen}
         product={selectedProduct}
         mode={mode}
+        reloadProducts={reloadProducts}
       />
     </div>
   );

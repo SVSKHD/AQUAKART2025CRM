@@ -47,7 +47,7 @@ export function CreateProduct() {
             Add a new product to your catalog.
           </DialogDescription>
         </DialogHeader>
-        <ProductForm onSubmit={handleSubmit} />
+        <ProductForm onSubmit={handleSubmit} isEditing={false} />
       </DialogContent>
     </Dialog>
   );

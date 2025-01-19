@@ -53,7 +53,7 @@ export function EditProduct({
         </DialogHeader>
         <ProductForm 
           defaultValues={product} 
-          isEditing 
+          isEditing = {true}  
           onSubmit={handleSubmit}
         />
       </DialogContent>

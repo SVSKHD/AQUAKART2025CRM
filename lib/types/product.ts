@@ -5,6 +5,8 @@ export interface ProductPhoto {
 }
 
 export interface Product {
+  discountPricePercentage: number | undefined;
+  keywords(arg0: string, keywords: any): unknown;
   _id: string;
   title: string;
   discountPriceStatus: boolean;

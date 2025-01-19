@@ -13,6 +13,9 @@ import { authService } from "@/lib/services/auth.service";
 import { setCredentials } from "@/lib/store/slices/authSlice";
 import { DropletIcon } from "lucide-react";
 import { LoginForm } from "./login-form";
+import AQ from "../../assests/Default.png"
+import Image from "next/image";
+
 
 interface LoginDialogProps {
   open: boolean;
@@ -65,7 +68,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
           <DialogTitle className="sr-only">Login to Aquakart Dashboard</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center space-y-4 mb-6">
-          <DropletIcon className="h-12 w-12 text-primary" />
+          <Image src={AQ} alt="AQ" className="h-20 w-20" />
           <div className="text-2xl font-semibold">Welcome Back</div>
           <p className="text-sm text-muted-foreground">Login to access the dashboard</p>
         </div>

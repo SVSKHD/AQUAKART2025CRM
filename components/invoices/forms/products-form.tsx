@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
 import { Product } from "@/lib/types/invoice";
 

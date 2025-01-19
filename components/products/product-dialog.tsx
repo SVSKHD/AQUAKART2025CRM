@@ -33,8 +33,11 @@ import {
 } from "@/components/ui/select";
 import { categories } from "@/lib/data/categories";
 import { useToast } from "@/components/ui/use-toast";
+import { ProductService } from "@/lib/services/products.service";
+
 
 const formSchema = z.object({
+  _id: z.string().optional(),
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
   }),
@@ -50,9 +53,11 @@ const formSchema = z.object({
   brand: z.string().min(1, {
     message: "Brand is required.",
   }),
+  slug: z.string().optional(),
   category: z.string().min(1, "Category is required"),
   discountPriceStatus: z.boolean().default(false),
   photos: z.any().optional(),
+  discountPricePercentage: z.coerce.number().min(0).max(20).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -62,6 +67,7 @@ interface ProductDialogProps {
   onOpenChange: (open: boolean) => void;
   product?: Product;
   mode: "create" | "edit";
+  reloadProducts: () => void;
 }
 
 export function ProductDialog({
@@ -69,6 +75,7 @@ export function ProductDialog({
   onOpenChange,
   product,
   mode,
+  reloadProducts,
 }: ProductDialogProps) {
   const { toast } = useToast();
   const isEditing = mode === "edit";
@@ -76,13 +83,15 @@ export function ProductDialog({
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      _id: "",
       title: "",
       description: "",
       price: 0,
       stock: 0,
       brand: "",
       category: "",
-      discountPriceStatus: false,
+      slug: "",
+      discountPricePercentage: 0,
     },
   });
 
@@ -90,6 +99,7 @@ export function ProductDialog({
   useEffect(() => {
     if (open && product && isEditing) {
       form.reset({
+        _id: product._id,
         title: product.title,
         description: product.description.replace(/<[^>]*>/g, ''), // Strip HTML tags
         price: product.price,
@@ -97,20 +107,69 @@ export function ProductDialog({
         brand: product.brand,
         category: product.category,
         discountPriceStatus: product.discountPriceStatus,
+        discountPricePercentage: product.discountPricePercentage,
+        slug: product.slug,
       });
-    } else if (!open) {
-      form.reset();
+    } else if (!open || !isEditing) {
+      form.reset({
+        title: "",
+        description: "",
+        price: 0,
+        stock: 0,
+        brand: "",
+        category: "",
+        discountPriceStatus: false,
+        discountPricePercentage: 0,
+        slug: "",
+      });
     }
   }, [open, product, isEditing, form]);
 
   async function onSubmit(values: FormValues) {
     try {
-      console.log("Form values:", values);
+      if (isEditing) {
+        const product = await ProductService.updateProduct(values._id, values);
+        if (!product) {
+          toast({
+            title: "Error",
+            description: `Failed to update product. Please try again.`,
+            variant: "destructive",
+          });
+         onOpenChange(false);
+        }
+        if (product) {
+          toast({
+            title: `Product ${isEditing ? "updated" : "created"} successfully`,
+            description: `${values.title} has been ${isEditing ? "updated" : "created"}.`,
+          });
+          onOpenChange(false);
+          reloadProducts();
+        }
+        
+      } else { 
+        const product = await ProductService.createProduct({
+          ...values,
+          _id: "", // Provide a default or generate a new ID
+          keywords: (arg0: string, keywords: any) => {}, // Provide default keywords function
+          ratings: 0, // Provide default ratings
+          numberOfReviews: 0, // Provide default number of reviews
+          createdAt: new Date().toISOString(), // Provide default created date
+          updatedAt: new Date().toISOString(), // Provide default updated date
+        });
+        if (!product) {
+          toast({
+            title: "Error",
+            description: `Failed to create product. Please try again.`,
+            variant: "destructive",
+          });
+        }
+      }
       
       toast({
         title: `Product ${isEditing ? "updated" : "created"} successfully`,
         description: `${values.title} has been ${isEditing ? "updated" : "created"}.`,
       });
+      reloadProducts();
       onOpenChange(false);
     } catch (error) {
       toast({
@@ -263,6 +322,22 @@ export function ProductDialog({
               )}
             />
 
+            {form.watch("discountPriceStatus") && (
+              <FormField
+                control={form.control}
+                name="discountPricePercentage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Product Discount Percentage</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Product Price Percentage %" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <FormField
               control={form.control}
               name="photos"
@@ -303,6 +378,20 @@ export function ProductDialog({
                 </div>
               </div>
             )}
+
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Slug</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Product slug" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="flex justify-end space-x-2">
               <Button
